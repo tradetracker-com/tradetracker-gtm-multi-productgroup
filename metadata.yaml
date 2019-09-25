@@ -1,5 +1,5 @@
 homepage: "https://tradetracker.com",
-documentation: "https://github.com/tradetracker-com/tradetracker-gtm-tracking-template/blob/master/README.md",
+documentation: "https://github.com/tradetracker-com/tradetracker-gtm-multi-productgroup/blob/master/README.md",
 versions:
-  - sha: 4908bce4b23f8895f5218d2f00a3f9297afc8004
+  - sha: b2ce09979ef1daa9b5c8591a01fe25790fde352c
     changeNotes: Initial Version
