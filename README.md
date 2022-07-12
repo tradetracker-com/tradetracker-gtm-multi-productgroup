@@ -42,7 +42,7 @@ In the Enhanced Ecommerce purchase model this variable can be found in the dataL
 
 
 ### Transaction Amount:
-This variable should capture the total monetary amount for the sale **excluding** any applicable tax such as VAT. It should be formatted as a "string", and should be a dot-decimal number to two decimal places. 
+This variable should capture the total monetary amount for the sale (sum of all included items) **excluding** any applicable tax such as VAT. It should be formatted as a "string", and should be a dot-decimal number to two decimal places. 
 
 Examples: 
 ```
@@ -108,6 +108,23 @@ In order to use this tag type without customization you will need to use Google'
 
 Once this is configured, you will need to create a GTM "dataLayer" type variable, and use the dataLayer location `ecommerce.purchase.products`. This will provide the TradeTracker.com tag with the basket items, their prices and categories so that we can fire the tracking tag with the appropriate product-group ids.
 
+If the Enhanced Ecommerce style products array is not available, you can create your own GTM variable to fill this data using the following schema below. It should be an array of objects, and each object needs the keys "price", "quantity" and "category". Any other product specific keys like the product name, EAN or identifier can be dropped. 
+
+```json
+[
+  {
+    "price": 12.34,
+    "quantity": 1,
+    "category": "category / sub-category"
+  },
+  {
+    "price": 98.76,
+    "quantity": 3,
+    "category": "category / sub-category"
+  }
+]
+```
+
 ### Additional Product Groups
 This field allows you to add additional product-group ids and the category keywords that should be used to match products to that product-group. 
 
@@ -125,6 +142,10 @@ Product-Group Id  |  Category Keywords
 It is also possible to use regular expressions in the Category Keywords field. If for example you use the category keyword `glasses`, this will find matches in the categories "Glasses", and "Sunglasses". To make this more strict, you could instead enter the regular expression `^glasses$` to ensure that only "Glasses" is matched with that product-group. 
 
 <em>Matching Category Keywords to Product-Group Ids will require some testing. How you structure your category paths internally will affect how they are pushed to the dataLayer, and how our Tag searches those categories for keywords. If you need any additional information or support on configuring this, please reach out to your Account Manager or contact us using support@tradetracker.com
+
+## <a name="fallback"></a>Sales tag Fallback
+
+In the event that the tag cannot construct a valid basket or list of product groups it will fallback to executing a regular sale pixel call to ensure that the transaction is still recorded.
 
 
 ## <a name="other"></a>Other Tag Types:
