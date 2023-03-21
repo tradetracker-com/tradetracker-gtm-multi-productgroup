@@ -1,7 +1,7 @@
-﻿___INFO___
+___INFO___
 
 {
-  "displayName": "TradeTracker.com MPG NEW",
+  "displayName": "TradeTracker.com MPG",
   "description": "TradeTracker.com Sales and Leads Tracking Tag. \n\nThis tag will allow you to generate sale (transactions) events or custom lead events that will be tracked on your TradeTracker.com campaign.",
   "categories": [
     "AFFILIATE_MARKETING",
@@ -106,6 +106,32 @@ ___TEMPLATE_PARAMETERS___
     "help": "Please select the dataLayer variable for the Basket Items in a sale.\u003c/br\u003e\u003c/br\u003e This should be an array of product objects, please refer to our documentation if you\u0027re unsure of which variable to use, or how to create the required variable."
   },
   {
+    "type": "SELECT",
+    "name": "basketType",
+    "displayName": "DataLayer Purchase Event Type",
+    "macrosInSelect": false,
+    "selectItems": [
+      {
+        "value": "EE",
+        "displayValue": "Enhanced Ecommerce (Universal Analytics)"
+      },
+      {
+        "value": "GA",
+        "displayValue": "Google Analytics 4"
+      }
+    ],
+    "simpleValueType": true,
+    "defaultValue": "EE",
+    "enablingConditions": [
+      {
+        "paramName": "tagType",
+        "paramValue": "multi",
+        "type": "EQUALS"
+      }
+    ],
+    "help": "This option allows you to choose between the type of purchase event used in your dataLayer. The more common model is Google\u0027s Universal Analytics Enhanced Ecommerce model, however the Google Analytics 4 model is also supported."
+  },
+  {
     "type": "SIMPLE_TABLE",
     "name": "productIds",
     "displayName": "ProductGroup ID",
@@ -124,7 +150,14 @@ ___TEMPLATE_PARAMETERS___
       }
     ],
     "newRowButtonText": "Add Product Group",
-    "help": "Add additional Product Groups by entering a ProductGroup ID in the left column, and a comma-separated list of category keywords for product-categories that should be matched to that product-group. \u003c/br\u003e\u003c/br\u003e  \u003cem\u003e\u003cstrong\u003eExample:\u003c/strong\u003eYou have a product-group for glasses and contacts, you can enter \"glasses, contacts\" as the category keyword.\u003c/em\u003e\u003c/br\u003e\u003c/br\u003e  It is also possible to enter regular expressions as category keywords to make matching more precise. \u003c/br\u003e\u003c/br\u003e  If you need any help setting up the additional Product Group Ids, please refer to our documentation, or contact your Account Manager for assistance."
+    "help": "Add additional Product Groups by entering a ProductGroup ID in the left column, and a comma-separated list of category keywords for product-categories that should be matched to that product-group. \u003c/br\u003e\u003c/br\u003e  \u003cem\u003e\u003cstrong\u003eExample:\u003c/strong\u003eYou have a product-group for glasses and contacts, you can enter \"glasses, contacts\" as the category keyword.\u003c/em\u003e\u003c/br\u003e\u003c/br\u003e  It is also possible to enter regular expressions as category keywords to make matching more precise. \u003c/br\u003e\u003c/br\u003e  If you need any help setting up the additional Product Group Ids, please refer to our documentation, or contact your Account Manager for assistance.",
+    "enablingConditions": [
+      {
+        "paramName": "tagType",
+        "paramValue": "multi",
+        "type": "EQUALS"
+      }
+    ]
   },
   {
     "type": "GROUP",
@@ -218,13 +251,27 @@ function mapPid(productGroups, category) {
 
 // Map a basket item as an object with a productId and amount
 function mapProducts(product) {
-  return product.map(function (item) {
-    var category = typeof item.category === 'string' ? item.category : item.category.join(">");
-    return {
-      'amount': item.price * item.quantity,
-      'productID': mapPid(productGroups, category.toLowerCase())
-    };
-  });
+  if (basketType === "EE") {
+    // Return basket values for "EE" type of basket
+    return product.map(function (item) {
+      var category = typeof item.category === 'string' ? item.category : item.category.join(">");
+      return {
+        'amount': item.price * item.quantity,
+        'productID': mapPid(productGroups, category.toLowerCase())
+      };
+    });
+  } else {
+    // Return basket values for "GA" type of basket
+    return product.map(function (item) {
+      var category = [item.item_category, item.item_category2, item.item_category3, item.item_category4, item.item_category5].filter(function(item) {
+	  return item != "";
+      }).join(">");
+      return {
+        'amount': item.price * item.quantity,
+        'productID': mapPid(productGroups, category.toLowerCase())
+      };
+    });
+  }
 }
 
 //// TAG LOGIC ////
@@ -240,6 +287,7 @@ const descrMerc   = data.hasOwnProperty('descrMerchant') ? '' + data.descrMercha
 const descrAffil  = data.hasOwnProperty('descrAffiliate') ? '' + data.descrAffiliate : '';
 const productIds  = data.hasOwnProperty('productIds') ? data.productIds : [];
 const basketItems = data.hasOwnProperty('basketItems') ? data.basketItems : [];
+const basketType  = data.hasOwnProperty('basketType') ? data.basketType : [];
 
 // Set tracking host
 let domain = '';
@@ -308,7 +356,8 @@ if (data.tagType === 'multi' && basket !== undefined && productGroups !== undefi
   } else {
     // add lead query
     imgUrl += '&event=lead';
-  }
+  }  
+  
   // pixel success callback
   if (query('send_pixel', imgUrl)) {
     sendPixel(imgUrl, data.gtmOnSuccess, data.gtmOnFailure);
