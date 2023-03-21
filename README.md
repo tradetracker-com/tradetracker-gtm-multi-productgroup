@@ -125,6 +125,9 @@ If the Enhanced Ecommerce style products array is not available, you can create 
 ]
 ```
 
+### Basket Items Array:
+This drop down allows you to select a DataLayer model. Either the [Universal Analytics Enhanced Ecommerce Purchase event](https://developers.google.com/analytics/devguides/collection/ua/gtm/enhanced-ecommerce?hl=en#purchases), or the [Google Analytics 4 Purchase event](https://developers.google.com/analytics/devguides/collection/ga4/set-up-ecommerce?hl=en). 
+
 ### Additional Product Groups
 This field allows you to add additional product-group ids and the category keywords that should be used to match products to that product-group. 
 
