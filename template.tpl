@@ -332,7 +332,7 @@ if (data.tagType === 'multi' && basket !== undefined && productGroups !== undefi
     imgUrl += '&tid='  + encodeUriComponent(orderID);
     imgUrl += '&descrMerchant='  + encodeUriComponent(descrMerc);
     imgUrl += '&descrAffiliate=' + encodeUriComponent(descrAffil);
-    imgUrl += 'tam='   + encodeUriComponent(basket[i].amount.toString());
+    imgUrl += '&tam='   + encodeUriComponent(basket[i].amount.toString());
     imgUrl += '&data=&event=sales&qty=1';
     imgUrl += '&currency=' + encodeUriComponent(currency);
     imgUrl += '&vc=' + encodeUriComponent(voucher);
