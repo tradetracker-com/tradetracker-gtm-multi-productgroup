@@ -2,9 +2,11 @@ homepage: "https://tradetracker.com",
 documentation: "https://github.com/tradetracker-com/tradetracker-gtm-multi-productgroup/blob/master/README.md",
 versions:
   # Latest version
+  - sha: f98b47d9a92fdd517fb0d693b3612d182d402df3
+    changeNotes: Adds missing & when building url queries
+  # Older versions
   - sha: 751553fae68ec62c7eb4714e08b2fddbb9c6c370
     changeNotes: Adds support for the GA4 DataLayer Purchase Event
-  # Older versions
   - sha: a4e79aa462d41fe95709e3226d427f5864b2e9f9
     changeNotes: Refactored to more closely match the regular tradetracker tag, fixed an issue with modifying amounts for quantity
   - sha: b2ce09979ef1daa9b5c8591a01fe25790fde352c
